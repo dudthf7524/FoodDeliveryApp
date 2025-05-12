@@ -13,12 +13,17 @@
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
+    "@reduxjs/toolkit": "^2.8.1",
+    "axios": "^1.9.0",
     "react": "19.0.0",
     "react-native": "0.79.2",
+    "react-native-config": "^1.5.5",
     "react-native-gesture-handler": "^2.25.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-safe-area-context": "^5.4.0",
-    "react-native-screens": "^3.37.0"
+    "react-native-screens": "^3.37.0",
+    "react-redux": "^9.2.0",
+    "redux-flipper": "^2.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

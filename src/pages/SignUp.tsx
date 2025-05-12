@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import {
+    ActivityIndicator,
     Alert,
     KeyboardAvoidingView,
     Platform,
@@ -11,27 +12,32 @@ import {
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
+import axios, { AxiosError } from 'axios';
+import Config from 'react-native-config';
 // import DismissKeyboardView from '../components/DismissKeyboardView';
 
 
 function SignUp() {
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
-    const emailRef = useRef < TextInput | null > (null);
-    const nameRef = useRef < TextInput | null > (null);
-    const passwordRef = useRef < TextInput | null > (null);
+    const emailRef = useRef<TextInput | null>(null);
+    const nameRef = useRef<TextInput | null>(null);
+    const passwordRef = useRef<TextInput | null>(null);
 
-    const onChangeEmail = useCallback(text => {
+    console.log(email)
+
+    const onChangeEmail = useCallback((text: string) => {
         setEmail(text.trim());
     }, []);
-    const onChangeName = useCallback(text => {
+    const onChangeName = useCallback((text: string) => {
         setName(text.trim());
     }, []);
-    const onChangePassword = useCallback(text => {
+    const onChangePassword = useCallback((text: string) => {
         setPassword(text.trim());
     }, []);
-    const onSubmit = useCallback(() => {
+    const onSubmit = useCallback(async () => {
         if (!email || !email.trim()) {
             return Alert.alert('알림', '이메일을 입력해주세요.');
         }
@@ -55,6 +61,24 @@ function SignUp() {
             );
         }
         console.log(email, name, password);
+        try {
+            setLoading(true)
+            console.log(Config.API_URL)
+            const response = await axios.post(`${Config.API_URL}/user`, { email, name, password })
+            console.log(response)
+            Alert.alert('알림', '회원가입이 완료되었습니다.')
+        } catch (error) {
+            const axiosError = error as AxiosError<{ message: string }>;
+
+            if (axiosError.response) {
+                Alert.alert('알림', axiosError.response.data.message);
+            } else {
+                Alert.alert('알림', '알 수 없는 오류가 발생했습니다.');
+            }
+        } finally {
+            setLoading(false)
+        }
+
         Alert.alert('알림', '회원가입 되었습니다.');
     }, [email, name, password]);
 
@@ -111,7 +135,7 @@ function SignUp() {
                         onSubmitEditing={onSubmit}
                     />
                 </View>
-              
+
                 <View style={styles.buttonZone}>
                     <Pressable
                         style={
@@ -119,9 +143,15 @@ function SignUp() {
                                 ? StyleSheet.compose(styles.loginButton, styles.loginButtonActive)
                                 : styles.loginButton
                         }
-                        disabled={!canGoNext}
+                        disabled={!canGoNext || loading}
                         onPress={onSubmit}>
-                        <Text style={styles.loginButtonText}>회원가입</Text>
+                        {
+                            loading ? (
+                                <ActivityIndicator color="white" />
+                            ) : (
+                                <Text style={styles.loginButtonText}>회원가입</Text>
+                            )
+                        }
                     </Pressable>
                 </View>
             </View>
