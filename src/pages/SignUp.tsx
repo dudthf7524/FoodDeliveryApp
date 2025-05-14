@@ -11,13 +11,14 @@ import {
     View,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../App';
+import { RootStackParamList } from '../../AppInner';
 import axios, { AxiosError } from 'axios';
 import Config from 'react-native-config';
 // import DismissKeyboardView from '../components/DismissKeyboardView';
 
+type SignUpScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
-function SignUp() {
+function SignUp({navigation}: SignUpScreenProps) {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
@@ -25,8 +26,11 @@ function SignUp() {
     const emailRef = useRef<TextInput | null>(null);
     const nameRef = useRef<TextInput | null>(null);
     const passwordRef = useRef<TextInput | null>(null);
+    
 
     console.log(email)
+
+    console.log(Config.API_URL)
 
     const onChangeEmail = useCallback((text: string) => {
         setEmail(text.trim());
@@ -66,7 +70,9 @@ function SignUp() {
             console.log(Config.API_URL)
             const response = await axios.post(`${Config.API_URL}/user`, { email, name, password })
             console.log(response)
-            Alert.alert('알림', '회원가입이 완료되었습니다.')
+            Alert.alert('알림', '회원가입이 완료되었습니다.');
+            navigation.navigate('SignIn');
+            
         } catch (error) {
             const axiosError = error as AxiosError<{ message: string }>;
 
